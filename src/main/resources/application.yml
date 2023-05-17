@@ -1,0 +1,76 @@
+server:
+  port: ${server.port}
+  servlet:
+    context-path: /
+  tomcat:
+    uri-encoding: utf-8
+    basedir: ${server.home:.}/logs/${spring.application.name}
+    accesslog.enabled: true
+    accesslog.pattern: '%h %l %u %t &quot;%r&quot; %s %b'
+    threads:
+      max: 20
+
+spring:
+  main:
+    allow-bean-definition-overriding: true
+  elasticsearch:
+    rest:
+      uris: http://127.0.0.1:9200
+      username:
+      password:
+
+#  profiles:
+#    active: @profileActive@
+  aop:
+    proxy-target-class: true
+    auto: true
+  application:
+    name: ${rootArtifactId}-service
+  mvc:
+    async:
+      request-timeout: 120000
+  datasource:
+    dynamic:
+      primary: bdp_hme
+      datasource:
+        bdp_hme:
+          url: jdbc:mysql://${db.host}:${db.port:3306}/${db.name}?allowMultiQueries=true&useSSL=false&characterEncoding=utf-8
+          username: ${db.username}
+          password: ${db.password}
+          type: com.alibaba.druid.pool.DruidDataSource
+          driver-class-name: com.mysql.jdbc.Driver
+      druid:
+        initial-size: 5
+        min-idle: 5
+        max-active: 20
+        max-wait: 5000
+        remove-abandoned: false
+        remove-abandoned-timeout: 180
+        time-between-eviction-runs-millis: 30000
+        min-evictable-idle-time-millis: 30000
+        validation-query: SELECT 1
+        test-while-idle: true
+        test-on-borrow: false
+        test-on-return: false
+        connect-properties:
+          druid.stat.slowSqlMillis: 100
+          druid.stat.logSlowSql: true
+        connection-init-sqls: set names utf8mb4
+  jackson:
+    default-property-inclusion: non_null
+
+mybatis:
+  configuration:
+    map-underscore-to-camel-case: true
+#    default-enum-type-handler: com.digitforce.bigdata.hme.dao.typehandler.EnumTypeHandler
+    auto-mapping-behavior: full
+    #log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    call-setters-on-nulls: true
+  mapper-locations: classpath*:mapper/**/*Mapper.xml
+  global-config:
+    # 逻辑删除配置
+    db-config:
+      # 删除前
+      logic-not-delete-value: 1
+      # 删除后
+      logic-delete-value: 0

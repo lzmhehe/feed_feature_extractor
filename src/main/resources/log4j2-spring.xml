@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="warn">
+    <Properties>
+        <!--    读取系统属性server.home，默认当前家目录    -->
+        <Property name="log.path">./logs</Property>
+        <Property name="FILE_LOG_PATTERN">%d{yyyy-MM-dd HH:mm:ss.SSS} [%p] %c{1.} [%t] - %m%n
+        </Property>
+        <!--        <Property name="CONSOLE_LOG_PATTERN">%d{HH:mm:ss.SSS} $ %5level $ %-40.40c{1.} $ %m%n</Property>-->
+        <Property name="CONSOLE_LOG_PATTERN">%d{HH:mm:ss.SSS} [%p] %c{1.} [%t] - %m%n</Property>
+        <Property name="CONSOLE_LOG_PATTERN_MDC">%d{HH:mm:ss.SSS} [%p] %c{1.} [%t] %X{orderId} - %m%n</Property>
+    </Properties>
+    <Appenders>
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout pattern="${CONSOLE_LOG_PATTERN}"  charset="UTF-8"></PatternLayout>
+        </Console>
+        <RollingFile name="defaultFile" fileName="${log.path}/default.log"
+                     filePattern="${log.path}/default.%d{yyyyMMdd}.log">
+            <PatternLayout pattern="${FILE_LOG_PATTERN}" charset="UTF-8"></PatternLayout>
+            <Policies>
+                <SizeBasedTriggeringPolicy size="128MB"/>
+            </Policies>
+            <DefaultRolloverStrategy max="10"/>
+        </RollingFile>
+        <RollingFile name="errorFile" fileName="${log.path}/error.log"
+                     filePattern="${log.path}/error.%d{yyyyMMdd}.log">
+            <Filters>
+                <ThresholdFilter level="error" onMatch="ACCEPT" onMismatch="DENY"/>
+            </Filters>
+            <PatternLayout pattern="${FILE_LOG_PATTERN}" charset="UTF-8"></PatternLayout>
+            <TimeBasedTriggeringPolicy/>
+        </RollingFile>
+
+        <RollingFile name="fact2SqlFile" fileName="${log.path}/fact2Sql.log"
+                     filePattern="${log.path}/fact2Sql.%d{yyyyMMdd}.log">
+            <PatternLayout pattern="${CONSOLE_LOG_PATTERN_MDC}" charset="UTF-8"></PatternLayout>
+            <TimeBasedTriggeringPolicy/>
+        </RollingFile>
+
+        <RollingFile name="optimizerFile" fileName="${log.path}/optimizer.log"
+                     filePattern="${log.path}/optimizer.%d{yyyyMMdd}.log">
+            <PatternLayout pattern="${FILE_LOG_PATTERN}" charset="UTF-8"></PatternLayout>
+            <TimeBasedTriggeringPolicy/>
+        </RollingFile>
+        <RollingFile name="integrationFile" fileName="${log.path}/integration.log"
+                     filePattern="${log.path}/integration.%d{yyyyMMdd}.log">
+            <PatternLayout pattern="${FILE_LOG_PATTERN}" charset="UTF-8"></PatternLayout>
+            <TimeBasedTriggeringPolicy/>
+        </RollingFile>
+        <RollingFile name="metadataFile" fileName="${log.path}/metadata.log"
+                     filePattern="${log.path}/metadata.%d{yyyyMMdd}.log">
+            <PatternLayout pattern="${CONSOLE_LOG_PATTERN_MDC}" charset="UTF-8"></PatternLayout>
+            <TimeBasedTriggeringPolicy/>
+        </RollingFile>
+        <RollingFile name="monitorFile" fileName="${log.path}/monitor.log"
+                     filePattern="${log.path}/monitor.%d{yyyyMMdd}.log">
+            <PatternLayout pattern="${FILE_LOG_PATTERN}" charset="UTF-8"></PatternLayout>
+            <TimeBasedTriggeringPolicy/>
+        </RollingFile>
+
+    </Appenders>
+    <Loggers>
+        <AsyncLogger name="fact2Sql" additivity="true" level="debug">
+            <AppenderRef ref="fact2SqlFile"/>
+        </AsyncLogger>
+        <AsyncLogger name="optimizerJob" additivity="true" level="debug">
+            <AppenderRef ref="optimizerFile"/>
+        </AsyncLogger>
+        <AsyncLogger name="integration" additivity="true" level="debug">
+            <AppenderRef ref="integrationFile"/>
+        </AsyncLogger>
+        <AsyncLogger name="metadata" additivity="true" level="debug">
+            <AppenderRef ref="metadataFile"/>
+        </AsyncLogger>
+        <!-- monitor print到 root上面 自己独立 -->
+        <AsyncLogger name="monitor" additivity="false" level="info">
+            <AppenderRef ref="monitorFile"/>
+        </AsyncLogger>
+
+        <Root level="info">
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="defaultFile"/>
+            <AppenderRef ref="errorFile"/>
+        </Root>
+    </Loggers>
+</Configuration>
